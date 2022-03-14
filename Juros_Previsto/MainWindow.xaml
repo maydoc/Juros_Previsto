@@ -1,0 +1,141 @@
+﻿<Window x:Class="Juros_Previsto.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Juros_Previsto"
+        mc:Ignorable="d"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13" 
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        Background="{x:Null}"
+        Title="MainWindow" Height="250" Width="500" AllowsTransparency="True" WindowStyle="None" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" >
+    <Grid>
+        <materialDesign:Card UniformCornerRadius="15" Margin="5">
+            <Grid>
+                <Grid.Resources>
+                    <Style TargetType="materialDesign:PackIcon">
+                        <Setter Property="Width" Value="20"/>
+                        <Setter Property="Height" Value="20"/>
+                    </Style>
+                </Grid.Resources>
+                <Button Click="Button_Calculate_Click" materialDesign:ShadowAssist.ShadowDepth="Depth0" Name="Button_Calculate" Content="{materialDesign:PackIcon Kind=CalculatorVariant, Size=25.25}" Foreground="White" Style="{StaticResource MaterialDesignFloatingActionButton}" Margin="165,190,285,10" Height="35" Width="35"/>
+                <StackPanel>
+                    <Grid>
+                        <TextBlock Text="Juros Previstos" FontWeight="SemiBold" FontSize="20" Margin="10 0 0 0" FontFamily="Arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <TextBlock Text="Cálculo automático" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0 0 120 0"/>
+                        <ToggleButton HorizontalAlignment="Right" Margin="0 0 80 0" Name="Check_Calc_Auto" Checked="Check_Calc_Auto_Checked" Unchecked="Check_Calc_Auto_Unchecked"/>
+                        <Rectangle Fill="#B7B7B7" Width="1" Margin="5 5 70 5 " HorizontalAlignment="Right"  />
+                        <ToggleButton HorizontalAlignment="Right" Background="#424242" Foreground="White" x:Name="Button_DarkLight_Mode" Checked="Button_DarkLight_Mode_Checked" Unchecked="Button_DarkLight_Mode_Unchecked" Width="30" Margin="0 3 33 0" Height="30" Style="{StaticResource MaterialDesignActionToggleButton}" Content="{materialDesign:PackIcon Kind=Brightness3}" materialDesign:ToggleButtonAssist.OnContent="{materialDesign:PackIcon Kind=Brightness5}" RenderTransformOrigin="0.5,0.5">
+                            <ToggleButton.RenderTransform>
+                                <TransformGroup>
+                                    <RotateTransform Angle="25"/>
+                                </TransformGroup>
+                            </ToggleButton.RenderTransform>
+                        </ToggleButton>
+                        <Button HorizontalAlignment="Right" x:Name="Button_Close" Click="Button_Close_Click" Foreground="White" Background="{x:Null}" Width="30" Margin="0 3 3 0" Height="30" Style="{StaticResource MaterialDesignFloatingActionButton}" BorderBrush="{x:Null}">
+                            <StackPanel Margin="-5">
+                                <materialDesign:PackIcon Kind="Close"  Width="30" Height="30"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                    <WrapPanel HorizontalAlignment="Right">
+                        
+                    </WrapPanel>
+                    <Grid Margin="15 10 ">
+                        <WrapPanel HorizontalAlignment="Center">
+                            <DatePicker Width="130" Language="pt-br" materialDesign:HintAssist.HelperText="Data Inicial" Name="DatePicker_Inicial"/>
+                            <DatePicker Width="130" Language="pt-br" Margin="40 0" materialDesign:HintAssist.HelperText="Data Final" Name="DatePicker_Final"/>
+                        </WrapPanel>
+                    </Grid>
+                    <WrapPanel>
+                        <StackPanel Margin="10 15 5 0">
+                            <WrapPanel>
+                                <TextBox Name="TextBox_Juros" materialDesign:HintAssist.Hint="Juros"  Width="60" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="10 0" FontSize="16"/>
+                                <ToggleButton x:Name="Switch_Type_Juros" Margin="10 0" VerticalAlignment="Bottom" Style="{StaticResource MaterialDesignActionToggleButton}" FontWeight="SemiBold" Content="%" materialDesign:ToggleButtonAssist.OnContent="{materialDesign:PackIcon Kind=Dollar}" Foreground="White"/>
+                                <ToggleButton x:Name="Swtich_Period_Juros" VerticalAlignment="Bottom" Style="{StaticResource MaterialDesignActionToggleButton}" Content="a.m" FontWeight="SemiBold" FontSize="12" materialDesign:ToggleButtonAssist.OnContent="a.d" Foreground="White" />
+                            </WrapPanel>
+                            <WrapPanel>
+                                <TextBox x:Name="TextBox_Carencia" materialDesign:HintAssist.Hint="Carência"  Width="80" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="10 0" FontSize="16"/>
+                                <TextBlock Text="Dias" VerticalAlignment="Bottom" FontSize="16" Margin="0 0 0 3"/>
+                            </WrapPanel>
+                            <TextBox x:Name="TextBox_Valor" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Width="100" HorizontalAlignment="Left" Margin="10 0 0 0" materialDesign:HintAssist.Hint="Valor" FontSize="16"/>
+                        </StackPanel>
+                        <materialDesign:Card Width="241" Margin="35 20" Height="130" UniformCornerRadius="15" materialDesign:ShadowAssist.ShadowDepth="Depth3">
+                            <StackPanel Margin="5">
+                                <Grid Margin="5">
+                                    <TextBlock Text="R$ 0,00" FontWeight="SemiBold" FontSize="18" Margin="10 0 0 0" HorizontalAlignment="Left" Name="Value_Nominal"/>
+                                    <TextBlock Text="R$ 0,00" FontWeight="SemiBold" FontSize="18" HorizontalAlignment="Right" Margin="0 0 10 0" Name="Value_Juros"/>
+                                </Grid>
+                                <Grid Margin="5 -6 5 0">
+                                    <TextBlock Text="Valor Nominal" Margin="10 0" FontSize="12"/>
+                                    <TextBlock Text="Juros" Margin="10 0" FontSize="12" HorizontalAlignment="Right"/>
+                                </Grid>
+                                <Rectangle Margin="10 3" Fill="#B7B7B7" Height="1"/>
+                                <Grid>
+                                    <ToggleButton VerticalAlignment="Center" Margin="0 0 5 0" Name="Switch_View_Date" Checked="Switch_View_Date_Checked" Unchecked="Switch_View_Date_Unchecked" HorizontalAlignment="Right" Style="{StaticResource MaterialDesignActionToggleButton}" Height="18" Width="18" Content="{materialDesign:PackIcon Kind=SwapHorizontalBold, Size=15.15}" FontWeight="SemiBold" FontSize="10" materialDesign:ToggleButtonAssist.OnContent="{materialDesign:PackIcon Kind=SwapHorizontalBold, Size=15.15}" Foreground="White" />
+                                    <materialDesign:Transitioner SelectedIndex="0" x:Name="Transitioner_Days">
+                                        <materialDesign:TransitionerSlide>
+                                            <materialDesign:TransitionerSlide.ForwardWipe>
+                                                <materialDesign:FadeWipe/>
+                                            </materialDesign:TransitionerSlide.ForwardWipe>
+                                            <materialDesign:TransitionerSlide.BackwardWipe>
+                                                <materialDesign:FadeWipe/>
+                                            </materialDesign:TransitionerSlide.BackwardWipe>
+                                            <materialDesign:TransitioningContent >
+                                                <TextBlock Text="0 dias" HorizontalAlignment="Center" FontSize="20" FontWeight="SemiBold" Margin="15 0" Name="Total_Days"/>
+                                            </materialDesign:TransitioningContent>
+                                        </materialDesign:TransitionerSlide>
+                                        <materialDesign:TransitionerSlide>
+                                            <materialDesign:TransitionerSlide.ForwardWipe>
+                                                <materialDesign:FadeWipe/>
+                                            </materialDesign:TransitionerSlide.ForwardWipe>
+                                            <materialDesign:TransitionerSlide.BackwardWipe>
+                                                <materialDesign:FadeWipe/>
+                                            </materialDesign:TransitionerSlide.BackwardWipe>
+                                            <materialDesign:TransitioningContent>
+                                                <TextBlock Text="0 ano, 0 meses e 0 dias" HorizontalAlignment="Center" FontSize="14" FontWeight="SemiBold" Margin="15 0" VerticalAlignment="Center" Name="Date_Details"/>
+                                            </materialDesign:TransitioningContent>
+                                        </materialDesign:TransitionerSlide>
+                                    </materialDesign:Transitioner>
+                                </Grid>
+                                <Rectangle Margin="10 3" Fill="#B7B7B7" Height="1"/>
+                                <TextBlock Text="Valor Total" HorizontalAlignment="Center" Margin="0" FontSize="10"/>
+                                <Grid>
+                                    <Button materialDesign:ShadowAssist.ShadowDepth="Depth0" Name="Button_Refresh" Click="Button_Refresh_Click" Style="{StaticResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Content="{materialDesign:PackIcon Kind=Refresh}"  Margin="0" Width="25" Height="25" Foreground="White" RenderTransformOrigin="0.5,0.5">
+                                        <Button.Triggers>
+                                            <EventTrigger RoutedEvent="Button.Click">
+                                                <BeginStoryboard>
+                                                    <Storyboard x:Name="Storyboard_Rotate">
+                                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RotateAngleRefresh" Storyboard.TargetProperty="Angle">
+                                                            <EasingDoubleKeyFrame KeyTime="0:0:0.0" Value="15"/>
+                                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="100"/>
+                                                            <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="200"/>
+                                                            <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="300"/>
+                                                            <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="330"/>
+                                                            <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="360"/>
+                                                        </DoubleAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                        </Button.Triggers>
+                                        <Button.RenderTransform>
+                                            <TransformGroup>
+                                                <RotateTransform Angle="0" x:Name="RotateAngleRefresh"/>
+                                            </TransformGroup>
+                                        </Button.RenderTransform>
+                                    </Button>
+                                    <TextBlock Text="R$ 0,00" HorizontalAlignment="Center" FontSize="22" FontWeight="SemiBold" Margin="5 3" Name="Value_Total"/>
+                                </Grid>
+                            </StackPanel>
+                        </materialDesign:Card>
+                    </WrapPanel>
+                </StackPanel>
+            </Grid>
+        </materialDesign:Card>
+    </Grid>
+</Window>
