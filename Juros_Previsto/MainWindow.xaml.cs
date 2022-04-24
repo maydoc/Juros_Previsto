@@ -15,7 +15,19 @@ namespace Juros_Previsto {
     public partial class MainWindow : Window {
         
         public MainWindow() {
+            InitializeComponent();
             DataContext = this;
+            if(Properties.Settings.Default.Date_Inicial != DateTime.MinValue) { DatePicker_Inicial.Text = Properties.Settings.Default.Date_Inicial.ToString(); }
+            if(Properties.Settings.Default.Date_Final != DateTime.MinValue) { DatePicker_Final.Text = Properties.Settings.Default.Date_Final.ToString(); }
+            if(Properties.Settings.Default.Juros != 0) { TextBox_Juros.Text = Properties.Settings.Default.Juros.ToString(); }
+            if(Properties.Settings.Default.Carencia != 0) { TextBox_Carencia.Text = Properties.Settings.Default.Carencia.ToString(); }
+            Check_Calc_Auto.IsChecked = Properties.Settings.Default.Calculo_Automatico;
+            Switch_Type_Juros.IsChecked = Properties.Settings.Default.Type_Juros;
+            Swtich_Period_Juros.IsChecked = Properties.Settings.Default.Type_Date;
+            if(Properties.Settings.Default.Value != 0) { TextBox_Valor.Text = Properties.Settings.Default.Value.ToString(); }
+            if(Check_Calc_Auto.IsChecked == true) {
+                Check_Calc_Auto_Click(null, null);
+            }
         }
         private void Switch_Mode_Theme(object sender, RoutedEventArgs e) {
             PaletteHelper paletteHelper = new PaletteHelper();
@@ -51,7 +63,7 @@ namespace Juros_Previsto {
             MainGrid.Children.Add(rectangle);
             
             rectangle.BeginAnimation(WidthProperty, animaiton);
-            await Task.Delay(500);
+            await Task.Delay(505);
             MainGrid.Children.Remove(rectangle);
         }
 
@@ -121,9 +133,12 @@ namespace Juros_Previsto {
             }
             return true;
         }
+        bool calculing = false;
         private void Calc_Auto() {
             if (!CalcAutoEnable) { return; }
             try {
+                if (calculing) { return; }
+                calculing = true;
                 BaseCalculoJuros juros = new BaseCalculoJuros();
                 int carencia = 0;
                 if(TextBox_Carencia.Text != String.Empty) {
@@ -138,26 +153,67 @@ namespace Juros_Previsto {
                     carencia);
 
                 juros.ExecuteCalc();
+                Formatacao_Texto();
 
                 Animate_Text(Value_Nominal, double.Parse(Value_Nominal.Text.Substring(2)), juros.Valor_Nominal);
                 Animate_Text(Value_Total, double.Parse(Value_Total.Text.Substring(2)), juros.Valor_Total);
                 Animate_Text(Value_Juros, double.Parse(Value_Juros.Text.Substring(2)), juros.Valor_Juros);
                 Animate_Text(Total_Days, double.Parse(Total_Days.Text.Replace(" dias", "")), juros.Dias_Totais, false);
+
+                Value_Nominal.ToolTip = juros.Valor_Nominal;
+                Value_Total.ToolTip = juros.Valor_Total;
+                Value_Juros.ToolTip = juros.Valor_Juros;
                 
                 if (AvisoCalcAuto.Height == 46) {
                     DoubleAnimation switchAnimation = new DoubleAnimation(46, 30, TimeSpan.FromMilliseconds(350));
                     AvisoCalcAuto.BeginAnimation(HeightProperty, switchAnimation);
                 }
+                calculing = false;
             }
-            catch(Exception) {
-
+            catch(Exception e) {
                 if(AvisoCalcAuto.Height == 30) {
                     DoubleAnimation switchAnimation = new DoubleAnimation(30, 46, TimeSpan.FromMilliseconds(350));
                     AvisoCalcAuto.BeginAnimation(HeightProperty, switchAnimation);
                 }
+                calculing = false;
             }
         }
         bool CalcAutoEnable = false;
+        private async void Formatacao_Texto() {
+            await Task.Delay(300);
+            if(Value_Nominal.Text.Length >= 11 && Value_Nominal.FontSize == 18) {
+                DoubleAnimation doubleAnimationTextLenght = new DoubleAnimation(18, 14, TimeSpan.FromMilliseconds(350));
+                Value_Nominal.BeginAnimation(FontSizeProperty, doubleAnimationTextLenght);
+            }
+            else if(Value_Nominal.Text.Length <= 11 && Value_Nominal.FontSize == 14) {
+                DoubleAnimation doubleAnimationTextLenght = new DoubleAnimation(14, 18, TimeSpan.FromMilliseconds(350));
+                Value_Nominal.BeginAnimation(FontSizeProperty, doubleAnimationTextLenght);
+            }
+            if(Value_Juros.Text.Length >= 11 && Value_Juros.FontSize == 18) {
+                DoubleAnimation doubleAnimationTextLenght = new DoubleAnimation(18, 14, TimeSpan.FromMilliseconds(350));
+                Value_Juros.BeginAnimation(FontSizeProperty, doubleAnimationTextLenght);
+            }
+            else if(Value_Juros.Text.Length <= 11 && Value_Juros.FontSize == 14) {
+                DoubleAnimation doubleAnimationTextLenght = new DoubleAnimation(14, 18, TimeSpan.FromMilliseconds(350));
+                Value_Juros.BeginAnimation(FontSizeProperty, doubleAnimationTextLenght);
+            }
+            if(Value_Total.Text.Length >= 14 && Value_Total.FontSize == 22) {
+                DoubleAnimation doubleAnimationTextLenght = new DoubleAnimation(22, 18, TimeSpan.FromMilliseconds(350));
+                Value_Total.BeginAnimation(FontSizeProperty, doubleAnimationTextLenght);
+            }
+            else if(Value_Total.Text.Length <= 14 && Value_Total.FontSize == 18) {
+                DoubleAnimation doubleAnimationTextLenght = new DoubleAnimation(18, 22, TimeSpan.FromMilliseconds(350));
+                Value_Total.BeginAnimation(FontSizeProperty, doubleAnimationTextLenght);
+            }
+            else if(Value_Total.Text.Length >= 17 && Value_Total.FontSize == 18) {
+                DoubleAnimation doubleAnimationTextLenght = new DoubleAnimation(18, 14, TimeSpan.FromMilliseconds(350));
+                Value_Total.BeginAnimation(FontSizeProperty, doubleAnimationTextLenght);
+            }
+            else if(Value_Total.Text.Length <= 17 && Value_Total.FontSize == 14) {
+                DoubleAnimation doubleAnimationTextLenght = new DoubleAnimation(14, 18, TimeSpan.FromMilliseconds(350));
+                Value_Total.BeginAnimation(FontSizeProperty, doubleAnimationTextLenght);
+            }
+        }
         private void Check_Calc_Auto_Click(object sender, RoutedEventArgs e) {
             switch(Check_Calc_Auto.IsChecked) {
                 case true:
@@ -186,6 +242,36 @@ namespace Juros_Previsto {
 
         private void Switch_Type_Click(object sender, RoutedEventArgs e) {
             Calc_Auto();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+            try {
+                DateTime temp = new DateTime();
+                Properties.Settings.Default.Date_Inicial = DateTime.TryParse(DatePicker_Inicial.Text, out temp) ? temp : DateTime.MinValue;
+                Properties.Settings.Default.Date_Final = DateTime.TryParse(DatePicker_Final.Text, out temp) ? temp : DateTime.MinValue;
+                Properties.Settings.Default.Juros = TextBox_Juros.Text == String.Empty ? 0 : double.Parse(TextBox_Juros.Text);
+                Properties.Settings.Default.Carencia = TextBox_Carencia.Text == String.Empty ? 0 : int.Parse(TextBox_Carencia.Text);
+                Properties.Settings.Default.Value = TextBox_Valor.Text == String.Empty ? 0 : double.Parse(TextBox_Valor.Text);
+                Properties.Settings.Default.Type_Date = (bool) Swtich_Period_Juros.IsChecked;
+                Properties.Settings.Default.Type_Juros = (bool) Swtich_Period_Juros.IsChecked;
+                Properties.Settings.Default.Calculo_Automatico = (bool) Check_Calc_Auto.IsChecked;
+                Properties.Settings.Default.Save();
+            }
+            catch(Exception) {
+                Console.WriteLine("Ocorreu um erro");
+            }
+        }
+
+        private void Button_Clear_Click(object sender, RoutedEventArgs e) {
+            Animate_Text(Value_Nominal, double.Parse(Value_Nominal.Text.Substring(2)), 0);
+            Animate_Text(Value_Total, double.Parse(Value_Total.Text.Substring(2)), 0);
+            Animate_Text(Value_Juros, double.Parse(Value_Juros.Text.Substring(2)), 0);
+            Animate_Text(Total_Days, double.Parse(Total_Days.Text.Replace(" dias", "")), 0, false);
+            DatePicker_Inicial.Text = "";
+            DatePicker_Final.Text = "";
+            TextBox_Juros.Text = "";
+            TextBox_Carencia.Text = "";
+            TextBox_Valor.Text = "";
         }
     }
 }

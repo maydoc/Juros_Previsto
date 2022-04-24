@@ -13,7 +13,7 @@
         TextOptions.TextRenderingMode="Auto"
         FontFamily="{DynamicResource MaterialDesignFont}"
         Background="{x:Null}"
-        Title="MainWindow" Height="250" Width="500" AllowsTransparency="True" WindowStyle="None" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" Height="250" Width="500" AllowsTransparency="True" WindowStyle="None" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
 
     <Grid x:Name="MainGrid">
         <materialDesign:Card UniformCornerRadius="15" Margin="5">
@@ -29,13 +29,7 @@
                         <TextBlock Text="Faltam dados" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="#DD153C" VerticalAlignment="Top"/>
                     </Grid>
                 </materialDesign:Card>
-                <Button Click="Button_Calculate_Click" materialDesign:ShadowAssist.ShadowDepth="Depth0" Name="Button_Calculate" Content="{materialDesign:PackIcon Kind=CalculatorVariant, Size=27.27}" Foreground="White" Style="{StaticResource MaterialDesignFloatingActionButton}" Margin="165,190,285,10" Height="35" Width="35" RenderTransformOrigin="0.5,0.5" Cursor="Hand">
-                    <Button.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform x:Name="ScaleTransform_Button_Calculate" ScaleX="1"/>
-                        </TransformGroup>
-                    </Button.RenderTransform>
-                </Button>
+
                 <StackPanel>
                     <Grid>
                         <TextBlock Text="Juros Previstos" FontWeight="SemiBold" FontSize="20" Margin="10 0 0 0" FontFamily="Arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
@@ -45,6 +39,11 @@
                                 <EventTrigger RoutedEvent="ToggleButton.Checked">
                                     <BeginStoryboard>
                                         <Storyboard x:Name="Storyboard_Scale">
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TranslateTransform_Clear" Storyboard.TargetProperty="X">
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0.0" Value="0"/>
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0.25" Value="0"/>
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0.55" Value="40"/>
+                                            </DoubleAnimationUsingKeyFrames>
                                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ScaleTransform_Button_Calculate" Storyboard.TargetProperty="ScaleX">
                                                 <EasingDoubleKeyFrame KeyTime="0:0:0.0" Value="1"/>
                                                 <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0.9"/>
@@ -83,6 +82,7 @@
                                 <EventTrigger RoutedEvent="ToggleButton.Unchecked">
                                     <BeginStoryboard>
                                         <Storyboard x:Name="Storyboard_UnScale">
+                                            <DoubleAnimation Duration="0:0:0.25" To="0" From="40" Storyboard.TargetName="TranslateTransform_Clear" Storyboard.TargetProperty="X"/>
                                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ScaleTransform_Button_Calculate" Storyboard.TargetProperty="ScaleX">
                                                 <EasingDoubleKeyFrame KeyTime="0:0:0.0" Value="0.1"/>
                                                 <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0.3"/>
@@ -156,8 +156,8 @@
                         <materialDesign:Card Width="241" Margin="45 25 20 0" Height="130" UniformCornerRadius="15" materialDesign:ShadowAssist.ShadowDepth="Depth3">
                             <StackPanel Margin="5">
                                 <Grid Margin="5">
-                                    <TextBlock Text="R$ 0,00" FontWeight="SemiBold" FontSize="18" Margin="10 0 0 0" HorizontalAlignment="Left" Name="Value_Nominal"/>
-                                    <TextBlock Text="R$ 0,00" FontWeight="SemiBold" FontSize="18" HorizontalAlignment="Right" Margin="0 0 10 0" Name="Value_Juros"/>
+                                    <TextBlock Text="R$ 0,00" FontWeight="SemiBold" FontSize="18" Margin="10 0 0 0" HorizontalAlignment="Left" Name="Value_Nominal" Width="100" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="R$ 0,00" FontWeight="SemiBold" FontSize="18" HorizontalAlignment="Right" Margin="0 0 10 0" Name="Value_Juros" Width="100" TextAlignment="Right" TextTrimming="CharacterEllipsis"/>
                                 </Grid>
                                 <Grid Margin="5 -6 5 0">
                                     <TextBlock Text="Valor Nominal" Margin="10 0" FontSize="12"/>
@@ -193,6 +193,7 @@
                                 </Grid>
                                 <Rectangle Margin="10 3" Fill="#B7B7B7" Height="1"/>
                                 <TextBlock Text="Valor Total" HorizontalAlignment="Center" Margin="0" FontSize="10"/>
+
                                 <Grid>
                                     <Button materialDesign:ShadowAssist.ShadowDepth="Depth0" Name="Button_Refresh" Click="Button_Refresh_Click" Style="{StaticResource MaterialDesignFloatingActionButton}" HorizontalAlignment="Left" Content="{materialDesign:PackIcon Kind=Refresh}"  Margin="0" Width="25" Height="25" Foreground="White" RenderTransformOrigin="0.5,0.5" Cursor="Hand">
                                         <Button.Triggers>
@@ -218,7 +219,7 @@
                                             </TransformGroup>
                                         </Button.RenderTransform>
                                     </Button>
-                                    <TextBlock Text="R$ 0,00" HorizontalAlignment="Center" FontSize="22" FontWeight="SemiBold" Margin="5 3" Name="Value_Total"/>
+                                    <TextBlock Text="R$ 0,00" HorizontalAlignment="Center" FontSize="22" FontWeight="SemiBold" Margin="5 3" Name="Value_Total" VerticalAlignment="Bottom" Width="175" TextTrimming="CharacterEllipsis" TextAlignment="Center"/>
                                 </Grid>
                             </StackPanel>
                         </materialDesign:Card>
@@ -238,5 +239,44 @@
                 </materialDesign:DialogHost>
             </Grid>
         </materialDesign:Card>
+        <WrapPanel Margin="100,190,285,10" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Button materialDesign:ShadowAssist.ShadowDepth="Depth0" Click="Button_Clear_Click" Name="Button_Clear" Content="{materialDesign:PackIcon Kind=Eraser, Size=27.27}" Foreground="White" Style="{StaticResource MaterialDesignFloatingActionButton}"  Height="35" Width="35" RenderTransformOrigin="0.5,0.5" Cursor="Hand">
+                <Button.Triggers>
+                    <EventTrigger RoutedEvent="Button.Click">
+                        <BeginStoryboard>
+                            <Storyboard x:Name="Storyboard_Rotate_Clear">
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RotateAngleRefresh_Clear" Storyboard.TargetProperty="Angle">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.0" Value="15"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="50"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="15"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="-35"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="15"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="50"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="15"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.7" Value="-35"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="15"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.9" Value="0"/>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Button.Triggers>
+                <Button.RenderTransform>
+                    <TransformGroup>
+                        <RotateTransform x:Name="RotateAngleRefresh_Clear" Angle="0"/>
+                        <TranslateTransform x:Name="TranslateTransform_Clear" X="0"/>
+                    </TransformGroup>
+                </Button.RenderTransform>
+            </Button>
+            <Button Click="Button_Calculate_Click" materialDesign:ShadowAssist.ShadowDepth="Depth0" Name="Button_Calculate" Content="{materialDesign:PackIcon Kind=CalculatorVariant, Size=27.27}" Foreground="White" Style="{StaticResource MaterialDesignFloatingActionButton}" Margin="5 0 -5 0"  Height="35" Width="35" RenderTransformOrigin="0.5,0.5" Cursor="Hand">
+                
+                <Button.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform x:Name="ScaleTransform_Button_Calculate" ScaleX="1"/>
+                    </TransformGroup>
+                </Button.RenderTransform>
+            </Button>
+        </WrapPanel>
+        
     </Grid>
 </Window>
