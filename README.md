@@ -6,7 +6,7 @@ Calcule o juros previsto até certa data. Informe o juros cobrado tanto em porce
 
 # Cálculo Automático
 O programa conta com um sistema de cálculo automático, basta digitar que o programa faz o resto
-![Untitled](https://user-images.githubusercontent.com/70946246/166164996-a0f86faa-2f00-4286-bc34-6fbf435de89d.gif)
+![ezgif com-gif-maker (5)](https://user-images.githubusercontent.com/70946246/166165124-f623c9b9-0e54-4fe6-84ae-f4ceecbf0fb6.gif)
 
 # Requerimentos
 - Windows 7 ou superior
