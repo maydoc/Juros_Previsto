@@ -1,5 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,6 +22,8 @@ namespace Juros_Previsto {
             if(Properties.Settings.Default.Date_Final != DateTime.MinValue) { DatePicker_Final.Text = Properties.Settings.Default.Date_Final.ToString(); }
             if(Properties.Settings.Default.Juros != 0) { TextBox_Juros.Text = Properties.Settings.Default.Juros.ToString(); }
             if(Properties.Settings.Default.Carencia != 0) { TextBox_Carencia.Text = Properties.Settings.Default.Carencia.ToString(); }
+            if(Properties.Settings.Default.Theme_Mode) { var pal = new PaletteHelper(); var theme = pal.GetTheme(); theme.SetBaseTheme(Theme.Light); pal.SetTheme(theme); Button_DarkLight_Mode.IsChecked = true; }
+            else { var pal = new PaletteHelper(); var theme = pal.GetTheme(); theme.SetBaseTheme(Theme.Dark); pal.SetTheme(theme); }
             Check_Calc_Auto.IsChecked = Properties.Settings.Default.Calculo_Automatico;
             Switch_Type_Juros.IsChecked = Properties.Settings.Default.Type_Juros;
             Swtich_Period_Juros.IsChecked = Properties.Settings.Default.Type_Date;
@@ -160,9 +163,9 @@ namespace Juros_Previsto {
                 Animate_Text(Value_Juros, double.Parse(Value_Juros.Text.Substring(2)), juros.Valor_Juros);
                 Animate_Text(Total_Days, double.Parse(Total_Days.Text.Replace(" dias", "")), juros.Dias_Totais, false);
 
-                Value_Nominal.ToolTip = juros.Valor_Nominal;
-                Value_Total.ToolTip = juros.Valor_Total;
-                Value_Juros.ToolTip = juros.Valor_Juros;
+                Value_Nominal.ToolTip = juros.Valor_Nominal.ToString("C2");
+                Value_Total.ToolTip = juros.Valor_Total.ToString("C2");
+                Value_Juros.ToolTip = juros.Valor_Juros.ToString("C2");
                 
                 if (AvisoCalcAuto.Height == 46) {
                     DoubleAnimation switchAnimation = new DoubleAnimation(46, 30, TimeSpan.FromMilliseconds(350));
@@ -245,21 +248,17 @@ namespace Juros_Previsto {
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-            try {
-                DateTime temp = new DateTime();
-                Properties.Settings.Default.Date_Inicial = DateTime.TryParse(DatePicker_Inicial.Text, out temp) ? temp : DateTime.MinValue;
-                Properties.Settings.Default.Date_Final = DateTime.TryParse(DatePicker_Final.Text, out temp) ? temp : DateTime.MinValue;
-                Properties.Settings.Default.Juros = TextBox_Juros.Text == String.Empty ? 0 : double.Parse(TextBox_Juros.Text);
-                Properties.Settings.Default.Carencia = TextBox_Carencia.Text == String.Empty ? 0 : int.Parse(TextBox_Carencia.Text);
-                Properties.Settings.Default.Value = TextBox_Valor.Text == String.Empty ? 0 : double.Parse(TextBox_Valor.Text);
-                Properties.Settings.Default.Type_Date = (bool) Swtich_Period_Juros.IsChecked;
-                Properties.Settings.Default.Type_Juros = (bool) Swtich_Period_Juros.IsChecked;
-                Properties.Settings.Default.Calculo_Automatico = (bool) Check_Calc_Auto.IsChecked;
-                Properties.Settings.Default.Save();
-            }
-            catch(Exception) {
-                Console.WriteLine("Ocorreu um erro");
-            }
+            DateTime temp = new DateTime();
+            Properties.Settings.Default.Date_Inicial = DateTime.TryParse(DatePicker_Inicial.Text, out temp) ? temp : DateTime.MinValue;
+            Properties.Settings.Default.Date_Final = DateTime.TryParse(DatePicker_Final.Text, out temp) ? temp : DateTime.MinValue;
+            Properties.Settings.Default.Juros = TextBox_Juros.Text == String.Empty ? 0 : double.Parse(TextBox_Juros.Text);
+            Properties.Settings.Default.Carencia = TextBox_Carencia.Text == String.Empty ? 0 : int.Parse(TextBox_Carencia.Text);
+            Properties.Settings.Default.Value = TextBox_Valor.Text == String.Empty ? 0 : double.Parse(TextBox_Valor.Text);
+            Properties.Settings.Default.Type_Date = (bool) Swtich_Period_Juros.IsChecked;
+            Properties.Settings.Default.Theme_Mode = new PaletteHelper().GetTheme().GetBaseTheme() == BaseTheme.Light ? true : false;
+            Properties.Settings.Default.Type_Juros = (bool) Swtich_Period_Juros.IsChecked;
+            Properties.Settings.Default.Calculo_Automatico = (bool) Check_Calc_Auto.IsChecked;
+            Properties.Settings.Default.Save();
         }
 
         private void Button_Clear_Click(object sender, RoutedEventArgs e) {
@@ -272,6 +271,25 @@ namespace Juros_Previsto {
             TextBox_Juros.Text = "";
             TextBox_Carencia.Text = "";
             TextBox_Valor.Text = "";
+        }
+
+        private void DatePickers_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e) {
+            string justNumbers = new String(((DatePicker)sender).Text.Where(Char.IsDigit).ToArray()) + e.Text;
+            if(justNumbers.Length == 8) {
+                string newDate = justNumbers.Insert(2, "/").Insert(5, "/");
+                try {
+                    ((DatePicker)sender).SelectedDate = DateTime.Parse(newDate);
+                }
+                catch(Exception ex) {
+                    ((DatePicker)sender).Text = "";
+                }
+
+            }
+            e.Handled = ((DatePicker)sender).Text.Length >= 10;
+        }
+
+        private void Button_DarkLight_Mode_Checked(object sender, RoutedEventArgs e) {
+
         }
     }
 }

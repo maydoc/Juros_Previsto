@@ -116,5 +116,17 @@ namespace Juros_Previsto.Properties {
                 this["Value"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Theme_Mode {
+            get {
+                return ((bool)(this["Theme_Mode"]));
+            }
+            set {
+                this["Theme_Mode"] = value;
+            }
+        }
     }
 }

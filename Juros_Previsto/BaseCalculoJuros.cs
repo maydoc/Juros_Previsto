@@ -55,6 +55,9 @@ namespace Juros_Previsto {
                 porcentagemjuros = juros / 30;
                 valorjuros = valorjuros / 30;
             }
+            else {
+                porcentagemjuros = juros;
+            }
             if (!jurosvalor) {
                 porcentagemjuros = porcentagemjuros * Dias_Totais;
                 double temp_const = porcentagemjuros / 100;

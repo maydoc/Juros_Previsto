@@ -13,8 +13,12 @@
         TextOptions.TextRenderingMode="Auto"
         FontFamily="{DynamicResource MaterialDesignFont}"
         Background="{x:Null}"
-        Title="MainWindow" Height="250" Width="500" AllowsTransparency="True" WindowStyle="None" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
-
+        Title="Juros Previsto" Height="250" Width="500" AllowsTransparency="True" ResizeMode="NoResize" WindowStyle="None" MouseLeftButtonDown="WindowMouseLeftButtonDown" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
+    <x:Code>
+        <![CDATA[
+            private void WindowMouseLeftButtonDown(object sender, MouseButtonEventArgs e) { DragMove(); }
+        ]]>
+    </x:Code>
     <Grid x:Name="MainGrid">
         <materialDesign:Card UniformCornerRadius="15" Margin="5">
             <Grid>
@@ -32,7 +36,7 @@
 
                 <StackPanel>
                     <Grid>
-                        <TextBlock Text="Juros Previstos" FontWeight="SemiBold" FontSize="20" Margin="10 0 0 0" FontFamily="Arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <TextBlock Text="Juros Previsto" FontWeight="SemiBold" FontSize="20" Margin="10 0 0 0" FontFamily="Arial" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                         <TextBlock Text="Cálculo automático" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0 0 120 0"/>
                         <ToggleButton HorizontalAlignment="Right" Margin="0 0 80 0" Name="Check_Calc_Auto" Click="Check_Calc_Auto_Click">
                             <ToggleButton.Triggers>
@@ -136,8 +140,8 @@
                     </Grid>
                     <Grid Margin="15 10 ">
                         <WrapPanel HorizontalAlignment="Center">
-                            <DatePicker Width="130" Language="pt-br" Margin="15 0" materialDesign:HintAssist.HelperText="Data Inicial" Name="DatePicker_Inicial" SelectedDateChanged="DatePicker_SelectedDateChanged"/>
-                            <DatePicker Width="130" Language="pt-br" Margin="15 0" materialDesign:HintAssist.HelperText="Data Final" Name="DatePicker_Final" SelectedDateChanged="DatePicker_SelectedDateChanged"/>
+                            <DatePicker Width="130" PreviewTextInput="DatePickers_PreviewTextInput" Language="pt-br" Margin="15 0" materialDesign:HintAssist.HelperText="Data Inicial" Name="DatePicker_Inicial" SelectedDateChanged="DatePicker_SelectedDateChanged"/>
+                            <DatePicker Width="130" PreviewTextInput="DatePickers_PreviewTextInput" Language="pt-br" Margin="15 0" materialDesign:HintAssist.HelperText="Data Final" Name="DatePicker_Final" SelectedDateChanged="DatePicker_SelectedDateChanged"/>
                         </WrapPanel>
                     </Grid>
                     <WrapPanel>
